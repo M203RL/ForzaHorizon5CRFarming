@@ -8,6 +8,28 @@ from PIL import Image
 from pynput.keyboard import Key, Controller as KeyboardController
 from pynput.mouse import Button, Controller as MouseController
 
+import pyautogui
+
+def wait_for_image(image_path, timeout=30):
+    start_time = time.time()
+    
+    while True:
+        # Search for the image on the screen
+        image_location = pyautogui.locateOnScreen(image_path)
+        
+        if image_location is not None:
+            # Image found
+            return image_location
+        
+        # Check if timeout has been reached
+        if time.time() - start_time > timeout:
+            # Timeout reached
+            return None
+        
+        # Sleep for a short duration before searching again
+        time.sleep(0.5)
+
+
 
 
 def getPos(img):
