@@ -8,7 +8,6 @@ from PIL import Image
 from pynput.keyboard import Key, Controller as KeyboardController
 from pynput.mouse import Button, Controller as MouseController
 
-loops = 10000
 
 
 def getPos(img):
@@ -80,6 +79,7 @@ time.sleep(0.05)
 mouse.click(Button.left)
 time.sleep(0.5)
 # for i in range(loops):
+num = 0
 while True:
 
     for i in range(27):
@@ -146,8 +146,9 @@ while True:
     time.sleep(2)
 
     keyboard.press(Key.space)
-    time.sleep(65)
+    time.sleep(85)
     keyboard.release(Key.space)
+
     time.sleep(0.5)
 
     keyboard.press(Key.esc)
@@ -156,8 +157,15 @@ while True:
 
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    time.sleep(20)
+    time.sleep(30)
 
     keyboard.press(Key.esc)
     keyboard.release(Key.esc)
     time.sleep(0.5)
+
+     
+
+    num += 1
+    print(f"已執行 {num} 次", end='\r')
+
+ 
