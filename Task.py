@@ -7,39 +7,40 @@ from screeninfo import get_monitors
 from PIL import Image
 from pynput.keyboard import Key, Controller as KeyboardController
 from pynput.mouse import Button, Controller as MouseController
-
 import pyautogui
 
-def wait_for_image(image_path, timeout=30):
+def wait_for_image(image_path, timeout=1):
     start_time = time.time()
     
     while True:
         # Search for the image on the screen
-        image_location = pyautogui.locateOnScreen(image_path)
-        
+        image_location = pyautogui.locateOnScreen(image_path, grayscale=True, confidence=0.65)
+     
         if image_location is not None:
             # Image found
-            return image_location
+            x, y, _, _ = image_location
+            #print(x, y)
+            return x, y
         
         # Check if timeout has been reached
         if time.time() - start_time > timeout:
             # Timeout reached
-            return None
+            continue
         
         # Sleep for a short duration before searching again
         time.sleep(0.5)
 
 
-
-
 def getPos(img):
     img_rgb = Image.frombytes('RGB', (width, height), sct.grab(monitor).rgb)
     pic1 = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2GRAY)
+    trows, tcols = img.shape[:2]
 
     result = cv2.matchTemplate(img, pic1, method)
+
+                               
     mn, _, mnLoc, _ = cv2.minMaxLoc(result)
     MPx, MPy = mnLoc
-    trows, tcols = img.shape[:2]
     x = int(MPx + tcols / 2)
     y = int(MPy + trows / 2)
     return x, y
@@ -81,7 +82,19 @@ confirm = cv2.cvtColor(np.array(confirm), cv2.COLOR_BGR2GRAY)
 search = cv2.imread(x+'.\\search.png')
 search = cv2.cvtColor(np.array(search), cv2.COLOR_BGR2GRAY)
 
-t1 = time.time()
+regera = cv2.imread(x+'.\\regera.png')
+regera = cv2.cvtColor(np.array(regera), cv2.COLOR_BGR2GRAY)
+
+enter = cv2.imread(x+'.\\enter.png')
+enter = cv2.cvtColor(np.array(enter), cv2.COLOR_BGR2GRAY)
+
+esc = cv2.imread(x+'.\\esc.png')
+esc = cv2.cvtColor(np.array(esc), cv2.COLOR_BGR2GRAY)
+
+anna = cv2.imread(x+'.\\anna.png')
+anna = cv2.cvtColor(np.array(anna), cv2.COLOR_BGR2GRAY)
+
+
 
 keyboard = KeyboardController()
 
@@ -94,7 +107,8 @@ def typetext(text):
 
 
 # to window
-x, y = getPos(window)
+# x, y = getPos(window)
+x, y = wait_for_image(window)
 mouse = MouseController()
 mouse.position = (x - w, y)
 time.sleep(0.05)
@@ -103,13 +117,38 @@ time.sleep(0.5)
 # for i in range(loops):
 num = 0
 while True:
+    t1 = time.time()
 
-    for i in range(27):
-        keyboard.press(Key.right)
-        keyboard.release(Key.right)
-        time.sleep(0.5)
+    
+    #for i in range(27):
+    #    keyboard.press(Key.right)
+    #   keyboard.release(Key.right)
+    #   time.sleep(0.5)
+    
+    start_time = time.time()
+    timeout = 0.3
+    
+    while True:
+        # Search for the image on the screen
+        image_location = pyautogui.locateOnScreen(super7, grayscale=True, confidence=0.5)
+        
+        if image_location is not None:
+            # Image found
+            px, y, _, _ = image_location
+            break
+        
+        # Check if timeout has been reached
+        if time.time() - start_time > timeout:
+            # Timeout reached
+            keyboard.press(Key.right)
+            keyboard.release(Key.right)
+            
+        
+        # Sleep for a short duration before searching again
+        time.sleep(0.1)
 
-    x, y = getPos(super7)
+    #x, y = getPos(super7)
+    x, y = wait_for_image(super7)
     mouse = MouseController()
     mouse.position = (x - w, y)
     time.sleep(0.5)
@@ -118,7 +157,8 @@ while True:
     keyboard.release(Key.enter)
     time.sleep(1)
 
-    x, y = getPos(card)
+    #x, y = getPos(card)
+    x, y = wait_for_image(card)
     mouse = MouseController()
     mouse.position = (x - w, y)
     time.sleep(0.5)
@@ -129,8 +169,11 @@ while True:
 
     keyboard.press(Key.backspace)
     keyboard.release(Key.backspace)
-    time.sleep(20)
+    time.sleep(1.5)
+    x, y = wait_for_image(confirm)
 
+    #x, y = getPos(search)
+    x, y = wait_for_image(search)
     x, y = getPos(search)
     mouse = MouseController()
     mouse.position = (x - w, y)
@@ -167,27 +210,40 @@ while True:
     keyboard.release(Key.enter)
     time.sleep(2)
 
+	
+    #x, y = wait_for_image(regera)
     keyboard.press(Key.space)
-    time.sleep(85)
+    x, y = wait_for_image(esc)
     keyboard.release(Key.space)
 
     time.sleep(0.5)
 
     keyboard.press(Key.esc)
     keyboard.release(Key.esc)
-    time.sleep(3)
+    time.sleep(2)
 
     keyboard.press(Key.enter)
     keyboard.release(Key.enter)
-    time.sleep(30)
+    # time.sleep(1)
+    # #x, y = wait_for_image(anna)
+    # time.sleep(25)
 
-    keyboard.press(Key.esc)
-    keyboard.release(Key.esc)
-    time.sleep(0.5)
+    x, y = wait_for_image(window)
+    mouse = MouseController()
+    mouse.position = (x - w, y - 50)
+    time.sleep(0.05)
+    mouse.click(Button.left)
+
+    x, y = wait_for_image(mainpage)
+    mouse.position = (x - w, y)
+    time.sleep(0.05)
+    mouse.click(Button.left)
+
 
      
 
     num += 1
-    print(f"已執行 {num} 次", end='\r')
+    t2 = time.time()
+    print(f"已執行 {num} 次 ({round(t2-t1, 2)}s)   ", end='\r')
 
  
